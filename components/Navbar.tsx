@@ -1,21 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useTranslation } from "react-i18next";
+import { useTranslations, useLocale } from "next-intl";
+import { useRouter, usePathname } from "next/navigation";
 import { ChevronDown, FileText, Briefcase, Users } from "lucide-react";
 
 export default function Navbar() {
-  const { t, i18n } = useTranslation();
+  const t = useTranslations("navbar");
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
   const [servicesOpen, setServicesOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const currentLanguage = i18n.language || "en";
+  const switchLanguage = (newLocale: string) => {
+    if (newLocale === locale) {
+      setLangOpen(false);
+      return;
+    }
 
-  const switchLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-    setLangOpen(false);
+    startTransition(() => {
+      // Replace the current locale in the pathname with the new locale
+      const pathWithoutLocale = pathname.replace(`/${locale}`, "") || "/";
+      const newPath = `/${newLocale}${pathWithoutLocale}`;
+
+      router.push(newPath);
+      router.refresh();
+      setLangOpen(false);
+    });
   };
 
   return (
@@ -23,7 +38,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0">
+          <Link href={`/${locale}`} className="flex-shrink-0">
             <Image
               src="/media/assets/theme-imgs/Business-Core-white.webp"
               alt="4eBusinessCore"
@@ -35,12 +50,12 @@ export default function Navbar() {
 
           {/* Navigation Links */}
           <div className="flex items-center gap-8">
-            {/* Main Link */}
+            {/* Home Link */}
             <Link
-              href="/"
+              href={`/${locale}`}
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
-              {t("navbar.home")}
+              {t("home")}
             </Link>
 
             {/* Services Dropdown */}
@@ -49,7 +64,7 @@ export default function Navbar() {
                 onClick={() => setServicesOpen(!servicesOpen)}
                 className="flex items-center gap-2 text-gray-700 hover:text-blue-600 font-medium transition-colors"
               >
-                {t("navbar.services")}
+                {t("services")}
                 <ChevronDown
                   className={`w-4 h-4 transition-transform ${
                     servicesOpen ? "rotate-180" : ""
@@ -60,28 +75,28 @@ export default function Navbar() {
               {servicesOpen && (
                 <div className="absolute top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                   <Link
-                    href="/services/certificates"
+                    href={`/${locale}/services/certificates`}
                     className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                     onClick={() => setServicesOpen(false)}
                   >
                     <FileText className="w-5 h-5" />
-                    {t("navbar.certificates")}
+                    {t("certificates")}
                   </Link>
                   <Link
-                    href="/services/projects"
+                    href={`/${locale}/services/projects`}
                     className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                     onClick={() => setServicesOpen(false)}
                   >
                     <Briefcase className="w-5 h-5" />
-                    {t("navbar.projects")}
+                    {t("projects")}
                   </Link>
                   <Link
-                    href="/services/partners"
+                    href={`/${locale}/services/partners`}
                     className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                     onClick={() => setServicesOpen(false)}
                   >
                     <Users className="w-5 h-5" />
-                    {t("navbar.partners")}
+                    {t("partners")}
                   </Link>
                 </div>
               )}
@@ -89,18 +104,18 @@ export default function Navbar() {
 
             {/* Achievements Link */}
             <Link
-              href="/achievements"
+              href={`/${locale}/achievements`}
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
-              {t("navbar.achievements")}
+              {t("achievements")}
             </Link>
 
             {/* About Us Link */}
             <Link
-              href="/about"
+              href={`/${locale}/about`}
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
-              {t("navbar.about")}
+              {t("about")}
             </Link>
 
             {/* Language Switcher */}
@@ -108,19 +123,20 @@ export default function Navbar() {
               <button
                 onClick={() => setLangOpen(!langOpen)}
                 className="flex items-center gap-2 text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                disabled={isPending}
               >
                 <Image
                   src={
-                    currentLanguage === "ar"
+                    locale === "ar"
                       ? "/media/assets/b-core-icons/saudi.svg"
                       : "/media/assets/b-core-icons/usa.svg"
                   }
-                  alt={currentLanguage === "ar" ? "Arabic" : "English"}
+                  alt={locale === "ar" ? "Arabic" : "English"}
                   width={24}
                   height={24}
                   className="rounded"
                 />
-                {currentLanguage === "ar" ? "العربية" : "English"}
+                {locale === "ar" ? "العربية" : "English"}
                 <ChevronDown
                   className={`w-4 h-4 transition-transform ${
                     langOpen ? "rotate-180" : ""
@@ -132,7 +148,8 @@ export default function Navbar() {
                 <div className="absolute top-full mt-2 right-0 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                   <button
                     onClick={() => switchLanguage("en")}
-                    className="flex items-center gap-3 px-4 py-2 w-full text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                    disabled={isPending}
+                    className="flex items-center gap-3 px-4 py-2 w-full text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors disabled:opacity-50"
                   >
                     <Image
                       src="/media/assets/b-core-icons/usa.svg"
@@ -145,7 +162,8 @@ export default function Navbar() {
                   </button>
                   <button
                     onClick={() => switchLanguage("ar")}
-                    className="flex items-center gap-3 px-4 py-2 w-full text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                    disabled={isPending}
+                    className="flex items-center gap-3 px-4 py-2 w-full text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors disabled:opacity-50"
                   >
                     <Image
                       src="/media/assets/b-core-icons/saudi.svg"

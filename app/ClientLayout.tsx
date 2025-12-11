@@ -3,7 +3,7 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useEffect } from "react";
-import i18n from "../lib/i18n";
+import i18n from "../i18n/i18n";
 
 export default function ClientLayout({
   children,
