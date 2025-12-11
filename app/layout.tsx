@@ -1,10 +1,9 @@
 import "./globals.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import ClientLayout from "./ClientLayout";
 
 export const metadata = {
-  title: "My Company",
-  description: "Company Marketing Website",
+  title: "4eBusinessCore",
+  description: "IT Services and IT Consulting",
 };
 
 export default function RootLayout({
@@ -15,9 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
