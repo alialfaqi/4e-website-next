@@ -1,4 +1,13 @@
 {
+    "navbar": {
+        "home": "الرئيسية",
+        "services": "الخدمات",
+        "certificates": "الشهادات",
+        "projects": "المشاريع",
+        "partners": "العملاء و الشركاء",
+        "achievements": "الإنجازات",
+        "about": "لماذا نحن ؟"
+    },
     "welcome": "مرحبًا بكم في شركتنا",
     "about": "من نحن",
     "contact": "اتصل بنا"

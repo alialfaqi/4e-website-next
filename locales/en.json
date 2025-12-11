@@ -1,4 +1,13 @@
 {
+    "navbar": {
+        "home": "Home",
+        "services": "Services",
+        "certificates": "Certificates",
+        "projects": "Projects",
+        "partners": "Clients & Partners",
+        "achievements": "Achievements",
+        "about": "About Us"
+    },
     "welcome": "Welcome to My Company",
     "about": "About Us",
     "contact": "Contact Us"
