@@ -23,12 +23,12 @@ export default function Navbar() {
     }
 
     startTransition(() => {
-      // Replace the current locale in the pathname with the new locale
-      const pathWithoutLocale = pathname.replace(`/${locale}`, "") || "/";
+      // Remove the current locale prefix from pathname
+      const pathWithoutLocale = pathname.replace(`/${locale}`, "") || "";
+      // Create new path with new locale
       const newPath = `/${newLocale}${pathWithoutLocale}`;
 
       router.push(newPath);
-      router.refresh();
       setLangOpen(false);
     });
   };
@@ -122,8 +122,8 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => setLangOpen(!langOpen)}
-                className="flex items-center gap-2 text-gray-700 hover:text-blue-600 font-medium transition-colors"
                 disabled={isPending}
+                className="flex items-center gap-2 text-gray-700 hover:text-blue-600 font-medium transition-colors disabled:opacity-50"
               >
                 <Image
                   src={
@@ -149,7 +149,7 @@ export default function Navbar() {
                   <button
                     onClick={() => switchLanguage("en")}
                     disabled={isPending}
-                    className="flex items-center gap-3 px-4 py-2 w-full text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-3 px-4 py-2 w-full text-left text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors disabled:opacity-50"
                   >
                     <Image
                       src="/media/assets/b-core-icons/usa.svg"
@@ -163,7 +163,7 @@ export default function Navbar() {
                   <button
                     onClick={() => switchLanguage("ar")}
                     disabled={isPending}
-                    className="flex items-center gap-3 px-4 py-2 w-full text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-3 px-4 py-2 w-full text-left text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors disabled:opacity-50"
                   >
                     <Image
                       src="/media/assets/b-core-icons/saudi.svg"
